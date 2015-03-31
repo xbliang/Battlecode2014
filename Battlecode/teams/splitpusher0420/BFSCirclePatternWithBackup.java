@@ -1,0 +1,37 @@
+package splitpusher0420;
+
+import battlecode.common.Clock;
+import battlecode.common.GameActionException;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotController;
+
+public class BFSCirclePatternWithBackup extends NoiseTowerPattern {
+	NoiseTowerPattern backup;
+	NoiseTowerPattern noiseTowerPattern;
+	BFSCirclePatternStep bfs;
+	RobotController tower;
+
+	public BFSCirclePatternWithBackup(RobotController t, int range, NoiseTowerPattern backup) throws GameActionException {
+		tower = t;
+		this.backup = backup;
+		noiseTowerPattern = backup;
+	}
+
+	public void shootNext() throws GameActionException {
+		noiseTowerPattern.shootNext();
+		if (bfs == null) {
+			bfs = new BFSCirclePatternStep(tower, 150, tower.getLocation());
+		} 
+		else {
+			while (Clock.getBytecodesLeft() > 270 && !BFSCirclePatternStep.doneSearching) {
+//				System.out.println(i - Clock.getBytecodesLeft());
+//				i = Clock.getBytecodesLeft();
+				bfs.searchStep();
+			}
+			if (BFSCirclePatternStep.doneSearching) {
+				noiseTowerPattern = bfs;
+			}
+		}
+
+	}
+}
